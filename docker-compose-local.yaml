@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: backend
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_password
+    networks:
+      - net_inner
+
+  app:
+    build:
+      context: ./wallets
+    command: ["/usr/src/app/manage.py", "runserver", "0.0.0.0:8000"]
+    restart: always
+    expose:
+      - "8000"
+    ports:
+      - '8015:8000'
+    environment:
+      DB_NAME: backend
+      DB_USER:  root
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_PASS: root_password
+    volumes:
+    - ./wallets/:/usr/src/app/
+    depends_on:
+      - db
+    networks:
+      - net_inner
+
+networks:
+  net_inner:
+    driver: bridge

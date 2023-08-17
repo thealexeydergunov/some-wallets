@@ -1,0 +1,1 @@
+just do `docker-compose -f docker-compose-local.yaml up`
